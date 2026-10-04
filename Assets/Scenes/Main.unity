@@ -128,6 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 103825351}
+  - component: {fileID: 103825352}
   m_Layer: 5
   m_Name: Goalkeeper
   m_TagString: Untagged
@@ -156,6 +157,18 @@ RectTransform:
   m_AnchoredPosition: {x: -5.5, y: 148}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &103825352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103825350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bedb3e73325737479fe3d691d310c7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoalKeeperMovement
 --- !u!1 &321939353
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,7 +519,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -5.5, y: -131}
+  m_AnchoredPosition: {x: -5.5, y: -319}
   m_SizeDelta: {x: 111, y: 396}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &930806551
@@ -518,6 +531,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 930806552}
+  - component: {fileID: 930806553}
   m_Layer: 5
   m_Name: Goalkeeper
   m_TagString: Untagged
@@ -546,6 +560,18 @@ RectTransform:
   m_AnchoredPosition: {x: -5.5, y: -150.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &930806553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930806551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bedb3e73325737479fe3d691d310c7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoalKeeperMovement
 --- !u!1 &1037389706
 GameObject:
   m_ObjectHideFlags: 0
@@ -937,7 +963,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -5.5, y: 135.5}
+  m_AnchoredPosition: {x: -5.5, y: 326}
   m_SizeDelta: {x: 111, y: 401}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2062578636
