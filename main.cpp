@@ -8,9 +8,7 @@ int main()
     // Open the supplied video file.
    // cv::VideoCapture video("resources/camera_test.mp4");
     cv::VideoCapture video(0);
-
-
-
+    
     if (!video.isOpened()) {
         std::cerr << "Could not open the video.\n";
         return 1;
@@ -23,9 +21,9 @@ int main()
     while (video.read(frame)) {
 
         //cv::imshow("detector", outputImage);
-        auto markers = detection.detect(frame);
+        std::vector<MarkerDetection::Marker> markers = detection.detect(frame);
 
-        for(const auto& marker : markers)
+        for(const MarkerDetection::Marker &marker : markers)
         {
             std::cout<<"marker found: "<<marker.id<<"\n";
         }

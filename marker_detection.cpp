@@ -2,9 +2,9 @@
 
 MarkerDetection::MarkerDetection()
 {
-    auto dictionary =
+    cv::aruco::Dictionary dictionary =
         cv::aruco::getPredefinedDictionary(
-            cv::aruco::DICT_4X4_50
+            cv::aruco::DICT_6X6_50
         );
 
     detector = cv::aruco::ArucoDetector(dictionary);
