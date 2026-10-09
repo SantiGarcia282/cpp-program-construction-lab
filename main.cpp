@@ -1,25 +1,39 @@
-#include <opencv2/opencv.hpp>
 #include <iostream>
+#include <opencv2/opencv.hpp>
+#include <opencv2/objdetect/aruco_detector.hpp>
+#include "marker_detection.h"
 #include "CameraInput.hpp"
 
 int main() {
-    CameraInput camera(0); // Iniciar tu componente
+    // 1. Initialize your camera component
+    CameraInput camera(0);
     cv::Mat frame;
 
-    std::cout << "Iniciando cámara. Pulsa 'q' en la ventana de video para salir." << std::endl;
+    // 2. Initialize detector
+    MarkerDetection detection; 
+
+    std::cout << "Starting camera. Press 'q' or 'Esc' in the video window to exit." << std::endl;
 
     while (true) {
-        // Pedirle el fotograma a tu componente
+        // 3. Request the frame
         if (!camera.getFrame(frame)) {
-            std::cerr << "Error: Fotograma en blanco." << std::endl;
+            std::cerr << "Error: Empty frame.\n";
             break;
         }
 
-        // Mostrar la ventana (Tu First Evidence)
-        cv::imshow("Goalkeeper Minigame - Camera", frame);
+        // 4. Pass the frame to detection logic
+        std::vector<MarkerDetection::Marker> markers = detection.detect(frame);
 
-        // Esperar 30 milisegundos y salir si se pulsa la tecla 'q'
-        if (cv::waitKey(30) == 'q') {
+        for(const MarkerDetection::Marker &marker : markers) {
+            std::cout << "Marker found: " << marker.id << "\n";
+        }
+
+        // 5. Display the final window
+        cv::imshow("Goalkeeper Minigame", frame);        
+
+        // 6. Exit condition (Supports both your 'q' and their 'Esc')
+        int key = cv::waitKey(30);
+        if (key == 'q' || key == 27) {
             break;
         }
     }

@@ -5,16 +5,16 @@
 
 class CameraInput {
 private:
-    cv::VideoCapture cap; // El objeto de OpenCV que controla la cámara
+    cv::VideoCapture cap; // OpenCV object that controls the camera
 
 public:
-    // Constructor: enciende la cámara
+    // Constructor: initializes the camera
     CameraInput(int deviceID = 0); 
     
-    // Destructor: apaga la cámara al cerrar
+    // Destructor: releases the camera upon closing
     ~CameraInput(); 
     
-    // Método principal para sacar un fotograma
+    // Main method to extract a frame
     bool getFrame(cv::Mat& frame); 
 };
 

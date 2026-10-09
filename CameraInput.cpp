@@ -2,21 +2,21 @@
 #include <iostream>
 
 CameraInput::CameraInput(int deviceID) {
-    // Intentar abrir la cámara por defecto (0)
+    // Try to open the specified camera device (default is 0)
     cap.open(deviceID);
     if (!cap.isOpened()) {
-        std::cerr << "Error: No se pudo encender la cámara." << std::endl;
+        std::cerr << "Error: Could not open the camera." << std::endl;
     }
 }
 
 CameraInput::~CameraInput() {
-    // Liberar la cámara correctamente al terminar
+    // Release the camera properly upon exit
     cap.release();
 }
 
 bool CameraInput::getFrame(cv::Mat& frame) {
     if (!cap.isOpened()) return false;
     
-    cap >> frame; // Extraer el fotograma de la cámara
-    return !frame.empty(); // Devolver true si el fotograma es válido
+    cap >> frame; // Extract the frame from the camera
+    return !frame.empty(); // Return true if the frame is valid
 }
