@@ -7,7 +7,7 @@ struct Ball {
 };
 
 struct GameState {
-    float gloveX = 0.5f;      // normalized [0,1], 0 = left, 1 = right
+    float gloveX = 0.5f;      // normalized [0,1], 0 = left, 1 = right, only using X cordinate for glove
     float gloveWidth = 0.15f; // normalized glove half-hitbox
 
     Ball ball;

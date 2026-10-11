@@ -13,7 +13,7 @@ int main() {
     InteractionMapper mapper(FRAME_WIDTH);
 
     std::cout << "=== InteractionMapping standalone test ===\n";
-    std::cout << "Simulated marker sweeping across frame. Ctrl+C to stop.\n\n";
+    std::cout << "Simulated marker sweeping across frame.\n\n";
 
     mapper.spawnBall();
 
@@ -26,7 +26,7 @@ int main() {
 
         GameState state = mapper.update(simulatedMarkerX);
 
-        // Print roughly 5x per second instead of 20x
+        
         if (step % 1 == 0) {
             std::cout << "Marker X = " << simulatedMarkerX
                       << "  |  Glove X = " << state.gloveX

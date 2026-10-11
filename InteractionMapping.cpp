@@ -17,7 +17,7 @@ void InteractionMapper::positionGlove(float normalizedX) {
 }
 
 void InteractionMapper::spawnBall() {
-    state_.ball.x = 0.2f + (static_cast<float>(std::rand()) / RAND_MAX) * 0.6f;
+    state_.ball.x = 0.2f + (static_cast<float>(std::rand()) / RAND_MAX) * 0.6f; //randomize X
     state_.ball.y = 0.0f;
     state_.ballActive = true;
     state_.saveMade = false;
@@ -26,17 +26,17 @@ void InteractionMapper::spawnBall() {
 bool InteractionMapper::checkSave() const {
     const float ballHalfWidth  = 0.03f;
     const float gloveHalfWidth = state_.gloveWidth * 0.5f;
-    return std::abs(state_.gloveX - state_.ball.x) < (gloveHalfWidth + ballHalfWidth);
+    return std::abs(state_.gloveX - state_.ball.x) < (gloveHalfWidth + ballHalfWidth); //check if gloves and ball collide
 }
 
 void InteractionMapper::updateBall() {
     if (!state_.ballActive) return;
 
-    state_.ball.y += state_.ball.speed;
+    state_.ball.y += state_.ball.speed; //simulate ball reaching goal
 
-    if (state_.ball.y >= 0.95f) {
+    if (state_.ball.y >= 0.95f) { // ball will always hit the goal at 0.95 y or above therefore save checked here
         state_.ball.y = 0.95f;
-        state_.saveMade = checkSave();
+        state_.saveMade = checkSave(); 
         if (state_.saveMade) state_.score += 1;
         state_.ballActive = false;
     }
