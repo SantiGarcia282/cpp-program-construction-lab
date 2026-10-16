@@ -1,37 +1,49 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include "CameraInput.hpp"
-#include <opencv2/objdetect/aruco_detector.hpp>
-#include "marker_detection.h"
+#include <thread>
+#include <chrono>
+#include <cstdlib>
+#include "InteractionMapping.h"
 
 int main() {
-    CameraInput camera(0);
-    MarkerDetection detection; // Iniciar tu componente
-    cv::Mat frame;
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
 
-    std::cout << "Iniciando cámara. Pulsa 'q' en la ventana de video para salir." << std::endl;
+    const int FRAME_WIDTH = 640;
+    InteractionMapper mapper(FRAME_WIDTH);
 
+    std::cout << "=== InteractionMapping standalone test ===\n";
+    std::cout << "Simulated marker sweeping across frame.\n\n";
+
+    mapper.spawnBall();
+
+    int step = 0;
     while (true) {
-        // Pedirle el fotograma a tu componente
-        if (!camera.getFrame(frame)) {
-            std::cerr << "Error: Fotograma en blanco." << std::endl;
-            break;
-        }
+        int phase = step % 80;
+        int simulatedMarkerX = (phase < 40)
+            ? 100 + phase * 12
+            : 580 - (phase - 40) * 12;
 
-        std::vector<MarkerDetection::Marker> markers = detection.detect(frame);
+        GameState state = mapper.update(simulatedMarkerX);
 
-        for(const MarkerDetection::Marker &marker : markers)
-        {
-            std::cout<<"Marker found: "<<marker.id<<"\n";
-        }
-        // Mostrar la ventana (Tu First Evidence)
-        cv::imshow("Goalkeeper Minigame - Camera", frame);
-
-        // Esperar 30 milisegundos y salir si se pulsa la tecla 'q'
-        if (cv::waitKey(30) == 'q') {
         
-        cv::destroyAllWindows();
-            return 0;
+        if (step % 1 == 0) {
+            std::cout << "Marker X = " << simulatedMarkerX
+                      << "  |  Glove X = " << state.gloveX
+                      << "  |  Ball y = " << state.ball.y
+                      << "  |  Ball x = " << state.ball.x
+                      << "  Active = " << (state.ballActive ? "yes" : "no ")
+                      << "  Score = " << state.score;
+            if (state.saveMade) std::cout << "  <-- SAVE!";
+            std::cout << "\n";
         }
+
+        if (!state.ballActive) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            mapper.spawnBall();
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        step++;
     }
+    return 0;
 }
