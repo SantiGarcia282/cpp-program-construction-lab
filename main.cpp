@@ -9,8 +9,8 @@ int main() {
     CameraInput camera(0);
     cv::Mat frame;
 
-    // 2. Initialize detector
-    MarkerDetection detection; 
+    // 2. Initialize detector with our new tolerance parameter
+    MarkerDetection detection(5); 
 
     std::cout << "Starting camera. Press 'q' or 'Esc' in the video window to exit." << std::endl;
 
@@ -19,6 +19,16 @@ int main() {
         if (!camera.getFrame(frame)) {
             std::cerr << "Error: Empty frame.\n";
             break;
+        }
+
+        // Simulate camera signal loss for 5 frames every 50 frames
+        // This proves the tracking memory works during occlusion
+        static int frameCount = 0;
+        frameCount++;
+        if (frameCount % 50 >= 45) {
+            frame = cv::Mat::zeros(frame.size(), frame.type());
+            cv::putText(frame, "SIMULATED CAMERA LOSS", cv::Point(20, 50), 
+                        cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 0, 255), 2);
         }
 
         // 4. Pass the frame to detection logic
@@ -31,7 +41,7 @@ int main() {
         // 5. Display the final window
         cv::imshow("Goalkeeper Minigame", frame);        
 
-        // 6. Exit condition (Supports both your 'q' and their 'Esc')
+        // 6. Exit condition
         int key = cv::waitKey(30);
         if (key == 'q' || key == 27) {
             break;
