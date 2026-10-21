@@ -10,7 +10,6 @@ MarkerDetection::MarkerDetection()
     detector = cv::aruco::ArucoDetector(dictionary);
 }
 
-
 std::vector<MarkerDetection::Marker>
 MarkerDetection::detect(const cv::Mat& frame)
 {
@@ -24,9 +23,19 @@ MarkerDetection::detect(const cv::Mat& frame)
     for (size_t i = 0; i < ids.size(); i++)
     {
         Marker marker;
-
         marker.id = ids[i];
         marker.corners = corners[i];
+
+        //calculate the center of the marker
+        //corners[i] has 4 points. Sum them and divide by 4.
+        cv::Point2f center(0.0f, 0.0f);
+        for (const auto& pt : marker.corners) {
+            center += pt;
+        }
+        center *= 0.25f; //divide by 4
+
+        marker.centerX = center.x;
+        marker.centerY = center.y;
 
         markers.push_back(marker);
     }
