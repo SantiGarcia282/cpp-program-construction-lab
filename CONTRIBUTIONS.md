@@ -3,4 +3,5 @@ Assignment 1: Created the first version of the interaction mapper, able to take 
 Assignment 2: Updated the marker detection to also track position of the markers center and added a visual debugger to see where the center is on the marker.
 
 Santi: 
-Created the CameraInput component, an object-oriented class that initializes the webcam, captures continuous frames, and validates them before passing them to the pipeline. It ensures the camera hardware is properly released upon closing.
+Assignment 1:Created the CameraInput component, an object-oriented class that initializes the webcam, captures continuous frames, and validates them before passing them to the pipeline. It ensures the camera hardware is properly released upon closing.
+Assignment 2: Improved the MarkerDetection component by implementing a temporal tracking system with a frame-loss tolerance, preventing the marker from disappearing instantly during brief occlusions.
