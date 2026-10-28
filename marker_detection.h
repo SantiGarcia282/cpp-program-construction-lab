@@ -1,23 +1,26 @@
+#ifndef MARKER_DETECTION_H
+#define MARKER_DETECTION_H
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/objdetect/aruco_detector.hpp>
 #include <vector>
 
-
-class MarkerDetection
-{
+class MarkerDetection {
 public:
-
-    struct Marker
-    {
-        int id;
-        std::vector<cv::Point2f> corners;
-    };
-
     MarkerDetection();
 
-    std::vector<Marker> detect(const cv::Mat& frame); //detect funtion
+    // detects four corner markers
+    std::vector<std::vector<cv::Point2f>>
+    detect(cv::Mat& frame);
 
 private:
-
-    cv::aruco::ArucoDetector detector;
+    double minArea;
+    double maxArea;
+    
+    bool isValidMarker(
+        const std::vector<cv::Point>& contour,
+        std::vector<cv::Point>& approx
+    );
 };
+
+#endif
