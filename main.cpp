@@ -1,4 +1,3 @@
-#include <opencv2/opencv.hpp>
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -9,40 +8,39 @@ int main() {
     std::srand(static_cast<unsigned>(std::time(nullptr)));
 
     const int FRAME_WIDTH = 640;
-    InteractionMapper mapper(FRAME_WIDTH);
+    const int FRAME_HEIGHT = 480;
+    
+    InteractionMapper mapper(FRAME_WIDTH, FRAME_HEIGHT);
 
     std::cout << "=== InteractionMapping standalone test ===\n";
-    std::cout << "Simulated marker sweeping across frame.\n\n";
+    std::cout << "Simulated marker moving in 2D.\n\n";
 
     mapper.spawnBall();
 
     int step = 0;
     while (true) {
-        int phase = step % 80;
-        int simulatedMarkerX = (phase < 40)
-            ? 100 + phase * 12
-            : 580 - (phase - 40) * 12;
+        //random x and y coords
+        int simulatedMarkerX = 320;
+        int simulatedMarkerY = 400;
 
-        GameState state = mapper.update(simulatedMarkerX);
+        GameState state = mapper.update(simulatedMarkerX, simulatedMarkerY);
 
-        
-        if (step % 1 == 0) {
-            std::cout << "Marker X = " << simulatedMarkerX
-                      << "  |  Glove X = " << state.gloveX
-                      << "  |  Ball y = " << state.ball.y
-                      << "  |  Ball x = " << state.ball.x
-                      << "  Active = " << (state.ballActive ? "yes" : "no ")
-                      << "  Score = " << state.score;
+        if (step % 2 == 0) { //print every other step to reduce spam
+            std::cout << "Marker(X,Y) = (" << simulatedMarkerX << "," << simulatedMarkerY << ")"
+                      << " | Glove(X,Y) = (" << state.gloveX << "," << state.gloveY << ")"
+                      << " | Ball(X,Y) = (" << state.ball.x << "," << state.ball.y << ")"
+                      << " | Active = " << (state.ballActive ? "yes" : "no ")
+                      << " | Score = " << state.score;
             if (state.saveMade) std::cout << "  <-- SAVE!";
             std::cout << "\n";
         }
 
         if (!state.ballActive) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
             mapper.spawnBall();
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
         step++;
     }
     return 0;
