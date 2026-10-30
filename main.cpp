@@ -1,44 +1,47 @@
 #include <iostream>
-#include <opencv2/opencv.hpp>
-#include <opencv2/objdetect/aruco_detector.hpp>
-#include "marker_detection.h"
+#include <thread>
+#include <chrono>
+#include <cstdlib>
+#include "InteractionMapping.h"
 
-int main()
-{
-    // Open the supplied video file.
-   // cv::VideoCapture video("resources/camera_test.mp4");
-    cv::VideoCapture video(0);
+int main() {
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
+
+    const int FRAME_WIDTH = 640;
+    const int FRAME_HEIGHT = 480;
     
-    if (!video.isOpened()) {
-        std::cerr << "Could not open the video.\n";
-        return 1;
-    }
+    InteractionMapper mapper(FRAME_WIDTH, FRAME_HEIGHT);
 
-    MarkerDetection detection;
-    cv::Mat frame;
+    std::cout << "=== InteractionMapping standalone test ===\n";
+    std::cout << "Simulated marker moving in 2D.\n\n";
 
-    // Read and display one frame at a time
-    while (video.read(frame)) {
+    mapper.spawnBall();
 
-        //cv::imshow("detector", outputImage);
-        std::vector<std::vector<cv::Point2f>> markers = detection.detect(frame);
+    int step = 0;
+    while (true) {
+        //random x and y coords
+        int simulatedMarkerX = 320;
+        int simulatedMarkerY = 400;
 
-        for(const std::vector<cv::Point2f> &marker : markers)
-        {
-            std::cout<<"marker candidate found";
+        GameState state = mapper.update(simulatedMarkerX, simulatedMarkerY);
 
-            for(const cv::Point2f& corner : marker)
-            {
-                std::cout << "(" << corner.x << "," << corner.y << ")";
-            }
-
+        if (step % 2 == 0) { //print every other step to reduce spam
+            std::cout << "Marker(X,Y) = (" << simulatedMarkerX << "," << simulatedMarkerY << ")"
+                      << " | Glove(X,Y) = (" << state.gloveX << "," << state.gloveY << ")"
+                      << " | Ball(X,Y) = (" << state.ball.x << "," << state.ball.y << ")"
+                      << " | Active = " << (state.ballActive ? "yes" : "no ")
+                      << " | Score = " << state.score;
+            if (state.saveMade) std::cout << "  <-- SAVE!";
+            std::cout << "\n";
         }
-        cv::imshow("OpenCV video test", frame);        
-        // Wait briefly Escape closes the program.
-        if (cv::waitKey(20) == 27) {
-            break;
+
+        if (!state.ballActive) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+            mapper.spawnBall();
         }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        step++;
     }
-    
     return 0;
 }
