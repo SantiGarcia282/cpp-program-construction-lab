@@ -1,46 +1,86 @@
 #include "marker_detection.h"
 
-MarkerDetection::MarkerDetection()
+
+//outer vector list of candidates, inner the four corners of a marker
+std::vector<std::vector<cv::Point2f>>
+MarkerDetection::detect(cv::Mat& frame) //input frame refrence
 {
-    cv::aruco::Dictionary dictionary =
-        cv::aruco::getPredefinedDictionary(
-            cv::aruco::DICT_6X6_50
+    std::vector<std::vector<cv::Point2f>> markers;
+
+    if (frame.empty())
+        return markers;
+
+    cv::Mat gray, binary; // storing grayscale image and edges
+    cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY); //opencv uses bluegreenred instead of redgreenblue
+
+    if (frame.channels() == 3) {
+        cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+    }
+    else if (frame.channels() == 4) {
+        cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+    }
+    else if (frame.channels() == 1) {
+        gray = frame.clone();
+    }
+    else {
+        return markers;
+    }
+
+
+    
+
+    cv::GaussianBlur(gray, gray, cv::Size(5, 5), 1.5); // greyscale frame blur to reduce noise 
+
+    //cv::Canny(gray, edges, 50, 150); was not included in PBL guideline, how to replace its effects?
+    // Convert grayscale image to binary.
+    cv::threshold(
+        gray,
+        binary,
+        0,
+        255,
+        cv::THRESH_BINARY_INV | cv::THRESH_OTSU
+    );
+
+    std::vector<std::vector<cv::Point>> contours; //list of contours found in frame
+
+    cv::findContours( // find contours in edges, store it in contours
+        binary, contours,
+        cv::RETR_LIST, // retrieve all contours
+        cv::CHAIN_APPROX_SIMPLE // compress contours that are straight by reducing the amount of points
+    );
+
+    for (const auto& contour : contours) { // go through ever contour
+        std::vector<cv::Point> polygon; // list to hold simplified contours
+
+        cv::approxPolyDP(
+            contour, polygon,
+            0.02 * cv::arcLength(contour, true),
+            true
         );
 
-    detector = cv::aruco::ArucoDetector(dictionary);
-}
+        if (polygon.size() != 4 ||
+            !cv::isContourConvex(polygon))
+            continue;
 
+        if (std::abs(cv::contourArea(polygon)) < 500)
+            continue;
 
-std::vector<MarkerDetection::Marker>
-MarkerDetection::detect(const cv::Mat& frame)
-{
-    std::vector<int> ids;
-    std::vector<std::vector<cv::Point2f>> corners;
+        std::vector<cv::Point2f> corners(
+            polygon.begin(), polygon.end()
+        );
 
-    detector.detectMarkers(frame, corners, ids);
+        markers.push_back(corners);
 
-    std::vector<Marker> markers;
-
-    for (size_t i = 0; i < ids.size(); i++)
-    {
-        Marker marker;
-
-        marker.id = ids[i];
-        marker.corners = corners[i];
-
-        markers.push_back(marker);
+        for (int i = 0; i < 4; ++i) {
+            cv::line(
+                frame,
+                polygon[i],
+                polygon[(i + 1) % 4],
+                cv::Scalar(0, 255, 0),
+                2
+            );
+        }
     }
 
     return markers;
 }
-
-   /* std::vector<int> markerIds;
-    std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
-    cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
-    cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_50);
-    cv::aruco::ArucoDetector detector(dictionary, detectorParams);
-    detector.detectMarkers(frame, markerCorners, markerIds, rejectedCandidates);  
-
-    cv::Mat outputframe = frame.clone();
-    cv::aruco::drawDetectedMarkers(outputframe, markerCorners, markerIds); */
-
