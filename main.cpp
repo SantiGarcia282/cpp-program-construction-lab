@@ -21,11 +21,17 @@ int main()
     while (video.read(frame)) {
 
         //cv::imshow("detector", outputImage);
-        std::vector<MarkerDetection::Marker> markers = detection.detect(frame);
+        std::vector<std::vector<cv::Point2f>> markers = detection.detect(frame);
 
-        for(const MarkerDetection::Marker &marker : markers)
+        for(const std::vector<cv::Point2f> &marker : markers)
         {
-            std::cout<<"marker found: "<<marker.id<<"\n";
+            std::cout<<"marker candidate found";
+
+            for(const cv::Point2f& corner : marker)
+            {
+                std::cout << "(" << corner.x << "," << corner.y << ")";
+            }
+
         }
         cv::imshow("OpenCV video test", frame);        
         // Wait briefly Escape closes the program.

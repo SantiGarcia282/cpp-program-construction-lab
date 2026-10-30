@@ -1,5 +1,6 @@
 #include "marker_detection.h"
 
+
 //outer vector list of candidates, inner the four corners of a marker
 std::vector<std::vector<cv::Point2f>>
 MarkerDetection::detect(cv::Mat& frame) //input frame refrence
@@ -9,18 +10,41 @@ MarkerDetection::detect(cv::Mat& frame) //input frame refrence
     if (frame.empty())
         return markers;
 
-    cv::Mat gray, edges; // storing grayscale image and edges
-
+    cv::Mat gray, binary; // storing grayscale image and edges
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY); //opencv uses bluegreenred instead of redgreenblue
+
+    if (frame.channels() == 3) {
+        cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+    }
+    else if (frame.channels() == 4) {
+        cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+    }
+    else if (frame.channels() == 1) {
+        gray = frame.clone();
+    }
+    else {
+        return markers;
+    }
+
+
+    
 
     cv::GaussianBlur(gray, gray, cv::Size(5, 5), 1.5); // greyscale frame blur to reduce noise 
 
     //cv::Canny(gray, edges, 50, 150); was not included in PBL guideline, how to replace its effects?
+    // Convert grayscale image to binary.
+    cv::threshold(
+        gray,
+        binary,
+        0,
+        255,
+        cv::THRESH_BINARY_INV | cv::THRESH_OTSU
+    );
 
     std::vector<std::vector<cv::Point>> contours; //list of contours found in frame
 
     cv::findContours( // find contours in edges, store it in contours
-        edges, contours,
+        binary, contours,
         cv::RETR_LIST, // retrieve all contours
         cv::CHAIN_APPROX_SIMPLE // compress contours that are straight by reducing the amount of points
     );
