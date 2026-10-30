@@ -3,12 +3,15 @@
 struct Ball {
     float x = 0.5f;
     float y = 0.0f;
-    float speed = 0.02f;
+    float speedX = 0.0f; //horizontal speed
+    float speedY = 0.02f; //vertical speed 
 };
 
 struct GameState {
-    float gloveX = 0.5f;      // normalized [0,1], 0 = left, 1 = right, only using X cordinate for glove
-    float gloveWidth = 0.15f; // normalized glove half-hitbox
+    float gloveX = 0.5f;      
+    float gloveY = 0.9f;      
+    float gloveWidth = 0.15f; 
+    float gloveHeight = 0.15f;
 
     Ball ball;
     int score = 0;

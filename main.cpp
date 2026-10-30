@@ -1,37 +1,47 @@
-#include <opencv2/opencv.hpp>
 #include <iostream>
-#include "CameraInput.hpp"
-#include <opencv2/objdetect/aruco_detector.hpp>
-#include "marker_detection.h"
+#include <thread>
+#include <chrono>
+#include <cstdlib>
+#include "InteractionMapping.h"
 
 int main() {
-    CameraInput camera(0);
-    MarkerDetection detection; // Iniciar tu componente
-    cv::Mat frame;
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
 
-    std::cout << "Iniciando cámara. Pulsa 'q' en la ventana de video para salir." << std::endl;
+    const int FRAME_WIDTH = 640;
+    const int FRAME_HEIGHT = 480;
+    
+    InteractionMapper mapper(FRAME_WIDTH, FRAME_HEIGHT);
 
+    std::cout << "=== InteractionMapping standalone test ===\n";
+    std::cout << "Simulated marker moving in 2D.\n\n";
+
+    mapper.spawnBall();
+
+    int step = 0;
     while (true) {
-        // Pedirle el fotograma a tu componente
-        if (!camera.getFrame(frame)) {
-            std::cerr << "Error: Fotograma en blanco." << std::endl;
-            break;
+        //random x and y coords
+        int simulatedMarkerX = 320;
+        int simulatedMarkerY = 400;
+
+        GameState state = mapper.update(simulatedMarkerX, simulatedMarkerY);
+
+        if (step % 2 == 0) { //print every other step to reduce spam
+            std::cout << "Marker(X,Y) = (" << simulatedMarkerX << "," << simulatedMarkerY << ")"
+                      << " | Glove(X,Y) = (" << state.gloveX << "," << state.gloveY << ")"
+                      << " | Ball(X,Y) = (" << state.ball.x << "," << state.ball.y << ")"
+                      << " | Active = " << (state.ballActive ? "yes" : "no ")
+                      << " | Score = " << state.score;
+            if (state.saveMade) std::cout << "  <-- SAVE!";
+            std::cout << "\n";
         }
 
-        std::vector<MarkerDetection::Marker> markers = detection.detect(frame);
-
-        for(const MarkerDetection::Marker &marker : markers)
-        {
-            std::cout<<"Marker found: "<<marker.id<<"\n";
+        if (!state.ballActive) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+            mapper.spawnBall();
         }
-        // Mostrar la ventana (Tu First Evidence)
-        cv::imshow("Goalkeeper Minigame - Camera", frame);
 
-        // Esperar 30 milisegundos y salir si se pulsa la tecla 'q'
-        if (cv::waitKey(30) == 'q') {
-        
-        cv::destroyAllWindows();
-            return 0;
-        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        step++;
     }
+    return 0;
 }
