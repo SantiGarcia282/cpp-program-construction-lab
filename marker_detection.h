@@ -8,4 +8,9 @@ public:
     std::vector<std::vector<cv::Point2f>> detect(
         cv::Mat& frame
     );
+private:
+    std::vector<cv::Point2f> orderCorners(
+        const std::vector<cv::Point2f>& corners
+    );
 };
+
