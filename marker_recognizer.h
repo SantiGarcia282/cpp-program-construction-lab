@@ -11,5 +11,5 @@ public:
     int recognize(const cv::Mat& warped);
 
 private:
-    cv::Ptr<cv::aruco::Dictionary> dictionary;
+    cv::aruco::Dictionary dictionary;
 };
