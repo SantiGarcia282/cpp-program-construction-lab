@@ -1,47 +1,61 @@
-#include <iostream>
-#include <thread>
-#include <chrono>
-#include <cstdlib>
-#include "InteractionMapping.h"
+#include <opencv2/aruco.hpp>
+#include "marker_detection.h"
+#include "marker_recognizer.h"
 
-int main() {
-    std::srand(static_cast<unsigned>(std::time(nullptr)));
+int main()
+{
+    // Open the supplied video file.
+   // cv::VideoCapture video("resources/camera_test.mp4");
 
-    const int FRAME_WIDTH = 640;
-    const int FRAME_HEIGHT = 480;
+
+    cv::VideoCapture video(0);
+    //std::string image_path = samples::findFile("aruco_id_25.png");
+    //cv::Mat image = cv::imread(image_path);
     
-    InteractionMapper mapper(FRAME_WIDTH, FRAME_HEIGHT);
-
-    std::cout << "=== InteractionMapping standalone test ===\n";
-    std::cout << "Simulated marker moving in 2D.\n\n";
-
-    mapper.spawnBall();
-
-    int step = 0;
-    while (true) {
-        //random x and y coords
-        int simulatedMarkerX = 320;
-        int simulatedMarkerY = 400;
-
-        GameState state = mapper.update(simulatedMarkerX, simulatedMarkerY);
-
-        if (step % 2 == 0) { //print every other step to reduce spam
-            std::cout << "Marker(X,Y) = (" << simulatedMarkerX << "," << simulatedMarkerY << ")"
-                      << " | Glove(X,Y) = (" << state.gloveX << "," << state.gloveY << ")"
-                      << " | Ball(X,Y) = (" << state.ball.x << "," << state.ball.y << ")"
-                      << " | Active = " << (state.ballActive ? "yes" : "no ")
-                      << " | Score = " << state.score;
-            if (state.saveMade) std::cout << "  <-- SAVE!";
-            std::cout << "\n";
-        }
-
-        if (!state.ballActive) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-            mapper.spawnBall();
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        step++;
+    if (!video.isOpened()) {
+        std::cerr << "Could not open the video.\n";
+        return 1;
     }
-    return 0;
+
+    /*if (image.empty())
+    {
+        std::cout << "Could not load image!" << std::endl;
+        return -1;
+    }*/
+
+    MarkerDetection detection;
+    MarkerRecognizer recognizer;  
+
+    cv::Mat frame;
+        // Read and display one frame at a time
+    while (video.read(frame)) {
+         //cv::imshow("detector", outputImage);
+        //std::vector<std::vector<cv::Point2f>> markers = detection.detect(frame);
+       // std::vector<cv::Mat> detect(cv::Mat& frame);
+        auto markers = detection.detect(frame);
+
+        const auto& warpedMarkers = detection.getWarpedMarkers();
+            //cv::imshow(image);
+        for(const std::vector<cv::Point2f> &marker : markers)
+        {
+        //std::cout<<"marker candidate found";
+         //for(const cv::Point2f& corner : marker)
+            //{
+             //std::cout << "(" << corner.x << "," << corner.y << ")";
+          //  }
+        cv::imshow("OpenCV video test", frame);        
+        // Wait briefly Escape closes the program.
+        if (cv::waitKey(20) == 27) {
+            break;
+            return 0;
+            }
+        }
+
+        for (const auto& warped : warpedMarkers)
+        {
+            int id = recognizer.recognize(warped);
+            if (id != -1)
+                std::cout << "Marker ID: " << id << std::endl;
+        }
+    }
 }

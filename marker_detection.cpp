@@ -13,6 +13,8 @@ MarkerDetection::detect(cv::Mat& frame) //input frame refrence
     if (frame.empty())
         return markers;
 
+    warpedMarkers.clear();
+
     cv::Mat gray, binary;
 
     if (frame.channels() == 3) { 
@@ -171,4 +173,8 @@ std::vector<cv::Point2f> MarkerDetection::orderCorners(
     }
 
     return ordered;
+}
+const std::vector<cv::Mat>& MarkerDetection::getWarpedMarkers() const
+{
+    return warpedMarkers;
 }
