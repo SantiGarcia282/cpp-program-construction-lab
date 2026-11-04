@@ -1,19 +1,14 @@
 #pragma once
 
-#include <opencv2/aruco.hpp>
 #include <opencv2/opencv.hpp>
-
 
 class MarkerRecognizer
 {
 public:
-    MarkerRecognizer();
+    MarkerRecognizer(const std::string& templatePath);
 
-    int recognize(const cv::Mat& warped);
-    
-    cv::Mat extractBits(const cv::Mat& warped);
-    cv::Mat getTemplate(int id);
+    bool recognize(const cv::Mat& warped);
 
 private:
-    cv::aruco::Dictionary dictionary;
+    cv::Mat markerTemplate;
 };

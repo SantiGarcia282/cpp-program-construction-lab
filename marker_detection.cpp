@@ -42,12 +42,19 @@ MarkerDetection::detect(cv::Mat& frame) //input frame refrence
 
     cv::findContours( // find contours in edges, store it in contours
         binary, contours,
-        cv::RETR_LIST, // retrieve all contours
+        //cv::RETR_LIST,    // retrieve all contours
+        cv::RETR_EXTERNAL, 
         cv::CHAIN_APPROX_SIMPLE // compress contours that are straight by reducing the amount of points
     );
 
     for (const auto& contour : contours) { // go through ever contour
-        std::vector<cv::Point> polygon; // list to hold simplified contours
+        if (contour.size() < 3)
+            continue;
+
+        if (std::abs(cv::contourArea(contour)) < 500)
+            continue;
+
+        std::vector<cv::Point> polygon;
 
         cv::approxPolyDP(
             contour, polygon,
@@ -57,9 +64,6 @@ MarkerDetection::detect(cv::Mat& frame) //input frame refrence
 
         if (polygon.size() != 4 ||
             !cv::isContourConvex(polygon))
-            continue;
-
-        if (std::abs(cv::contourArea(polygon)) < 500)
             continue;
 
         std::vector<cv::Point2f> corners(polygon.begin(), polygon.end());
@@ -91,6 +95,8 @@ MarkerDetection::detect(cv::Mat& frame) //input frame refrence
             matrix,
             cv::Size(200, 200)
         );
+
+        warpedMarkers.push_back(warped);
         
         //cv::Mat matrix = cv::getPerspectiveTransform(src, polygon);        
         //calculate center
@@ -174,6 +180,7 @@ std::vector<cv::Point2f> MarkerDetection::orderCorners(
 
     return ordered;
 }
+
 const std::vector<cv::Mat>& MarkerDetection::getWarpedMarkers() const
 {
     return warpedMarkers;
