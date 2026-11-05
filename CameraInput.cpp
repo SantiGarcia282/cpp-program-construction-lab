@@ -1,5 +1,7 @@
 #include "CameraInput.hpp"
 #include <iostream>
+#include <string>
+#include <opencv2/opencv.hpp>
 
 CameraInput::CameraInput(int deviceID) {
     // Intentar abrir la cámara por defecto (0)
