@@ -11,4 +11,5 @@ public:
 
 private:
     cv::Mat markerTemplate;
+    int frameCount = 0;
 };

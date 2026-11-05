@@ -34,7 +34,7 @@ int main()
 
         for (const auto& warped : warpedMarkers)
         {
-            if (recognizer.recognize(warped))
+            if (recognizer.recognize(warped) && frameCount % 30 == 0)
             {
                 std::cout << "Our marker detected!\n";
             }

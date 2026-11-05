@@ -32,7 +32,6 @@ bool MarkerRecognizer::recognize(const cv::Mat& warped)
 
     cv::Mat binary;
 
-    //convert the warped marker to binary
     cv::threshold(
         warped,
         binary,
@@ -41,18 +40,40 @@ bool MarkerRecognizer::recognize(const cv::Mat& warped)
         cv::THRESH_BINARY | cv::THRESH_OTSU
     );
 
-    cv::Mat result;
+    cv::Mat rotated = markerTemplate;
+    double bestScore = -1.0;
 
-    //compare the warped marker with our PNG
-    cv::matchTemplate(
-        binary,
-        markerTemplate,
-        result,
-        cv::TM_CCOEFF_NORMED
-    );
+    for (int i = 0; i < 4; i++)
+    {
+        cv::Mat result;
 
-    double score = result.at<float>(0, 0);
+        //compare the warped marker with rotated template image
+        cv::matchTemplate(
+            binary,
+            rotated,
+            result,
+            cv::TM_CCOEFF_NORMED
+        );
 
-    //higher score = better match
-    return score >= 0.85;
+        double score = result.at<float>(0, 0);
+
+        bestScore = std::max(bestScore, score);
+
+        //rotate 90 degrees clockwise for the next iteration
+        cv::rotate(
+            rotated,
+            rotated,
+            cv::ROTATE_90_CLOCKWISE
+        );
+    }
+    
+    frameCount++;
+    
+    if(frameCount % 30 == 0)
+    {
+        std::cout << "Best score: " << bestScore << std::endl;        
+    }
+
+
+    return bestScore >= 0.85;
 }
