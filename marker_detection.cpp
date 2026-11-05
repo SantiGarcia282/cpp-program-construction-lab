@@ -97,15 +97,13 @@ MarkerDetection::detect(cv::Mat& frame) //input frame refrence
         );
 
         warpedMarkers.push_back(warped);
-        
-        //cv::Mat matrix = cv::getPerspectiveTransform(src, polygon);        
+           
         //calculate center
         cv::Point2f center(0, 0);
             for (const auto& pt : corners) {
                 center += pt;
                 }
             center *= 0.25f;
-
 
         markers.push_back(corners);
 
@@ -127,14 +125,6 @@ MarkerDetection::detect(cv::Mat& frame) //input frame refrence
             -1
         );
     }
-
-    /*cv::matchTemplate(
-        frame,
-        image,
-        result,
-        TM_COEFF_NORMED
-    );*/
-
     return markers;
 }
 

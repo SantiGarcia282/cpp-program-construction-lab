@@ -74,6 +74,10 @@ bool MarkerRecognizer::recognize(const cv::Mat& warped)
         std::cout << "Best score: " << bestScore << std::endl;        
     }
 
+    const double Match_Max = 0.85;
 
-    return bestScore >= 0.85;
+    if (bestScore < Match_Max) //reject any candidate with less than .85 score
+        return false;
+
+    return true;
 }
