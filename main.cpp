@@ -1,47 +1,71 @@
+#include <opencv2/opencv.hpp>
 #include <iostream>
-#include <thread>
-#include <chrono>
-#include <cstdlib>
-#include "InteractionMapping.h"
 
-int main() {
-    std::srand(static_cast<unsigned>(std::time(nullptr)));
+#include "marker_detection.h"
+#include "marker_recognizer.h"
 
-    const int FRAME_WIDTH = 640;
-    const int FRAME_HEIGHT = 480;
-    
-    InteractionMapper mapper(FRAME_WIDTH, FRAME_HEIGHT);
+int main()
+{
+    cv::VideoCapture video(0);
 
-    std::cout << "=== InteractionMapping standalone test ===\n";
-    std::cout << "Simulated marker moving in 2D.\n\n";
-
-    mapper.spawnBall();
-
-    int step = 0;
-    while (true) {
-        //random x and y coords
-        int simulatedMarkerX = 320;
-        int simulatedMarkerY = 400;
-
-        GameState state = mapper.update(simulatedMarkerX, simulatedMarkerY);
-
-        if (step % 2 == 0) { //print every other step to reduce spam
-            std::cout << "Marker(X,Y) = (" << simulatedMarkerX << "," << simulatedMarkerY << ")"
-                      << " | Glove(X,Y) = (" << state.gloveX << "," << state.gloveY << ")"
-                      << " | Ball(X,Y) = (" << state.ball.x << "," << state.ball.y << ")"
-                      << " | Active = " << (state.ballActive ? "yes" : "no ")
-                      << " | Score = " << state.score;
-            if (state.saveMade) std::cout << "  <-- SAVE!";
-            std::cout << "\n";
-        }
-
-        if (!state.ballActive) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-            mapper.spawnBall();
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        step++;
+    if (!video.isOpened())
+    {
+        std::cerr << "Could not open the camera.\n";
+        return 1;
     }
+
+    MarkerDetection detection;
+    MarkerRecognizer recognizer("aruco_id_25.png");
+
+    cv::Mat frame;
+    int frameCount = 0;
+
+    while (video.read(frame))
+    {
+        int64 start = cv::getTickCount();
+
+        // Detect candidates
+        auto markers = detection.detect(frame);
+
+        int64 afterDetection = cv::getTickCount();
+
+        // Recognize candidates
+        const auto& warpedMarkers = detection.getWarpedMarkers();
+
+        for (const auto& warped : warpedMarkers)
+        {
+            if (recognizer.recognize(warped))
+            {
+                std::cout << "Our marker detected!\n";
+            }
+        }
+
+        int64 afterRecognition = cv::getTickCount();
+
+        // Calculate timings
+        double detectionMs =
+            (afterDetection - start) * 1000.0 / cv::getTickFrequency();
+
+        double recognitionMs =
+            (afterRecognition - afterDetection) * 1000.0 / cv::getTickFrequency();
+
+        // Print every 30 frames
+        if (++frameCount % 30 == 0)
+        {
+            std::cout << "Detection: " << detectionMs
+                      << " ms | Recognition: " << recognitionMs
+                      << " ms | Candidates: " << warpedMarkers.size()
+                      << '\n';
+        }
+
+        cv::imshow("OpenCV video test", frame);
+
+        if (cv::waitKey(1) == 27)
+            break;
+    }
+
+    video.release();
+    cv::destroyAllWindows();
+
     return 0;
 }
