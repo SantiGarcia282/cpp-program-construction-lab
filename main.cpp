@@ -11,8 +11,8 @@ int main()
     CameraInput camera(0);
     cv::Mat frame;
 
-    MarkerDetection detection;
-    MarkerRecognizer recognizer("aruco_id_25.png"); 
+    MarkerRecognizer recognizer("aruco_id_25.png");
+    MarkerDetection detection(recognizer);
 
     //grab frame
     if (!camera.getFrame(frame)) {
@@ -30,32 +30,35 @@ int main()
     while (camera.getFrame(frame))
     {
         auto candidates = detection.detect(frame);
-        const auto& warpedMarkers = detection.getWarpedMarkers();
 
         //default marker position
         int markerX = frameWidth / 2;
         int markerY = frameHeight / 2;
 
         bool markerFound = false;
-        for (size_t i = 0; i < warpedMarkers.size(); i++)
+        if (!candidates.empty())
         {
-            if (recognizer.recognize(warpedMarkers[i]))
-            {
-                //if correct marker, calculate its center based on 4 corners
-                cv::Point2f center(0, 0);
-                for (const auto& pt : candidates[i]) {
-                    center += pt;
-                }
-                center *= 0.25f; //divide by 4 to get center
+            //use the first recognized marker
+            cv::Point2f center(0, 0);
 
-                markerX = static_cast<int>(center.x);
-                markerY = static_cast<int>(center.y);
-                markerFound = true;
-
-                //draw a line or circle if it's our specific marker
-                cv::circle(frame, center, 10, cv::Scalar(255, 0, 255), 3);
-                break; //stop checking other candidates once found
+            for (const auto& pt : candidates[0]) {
+                center += pt;
             }
+
+            center *= 0.25f;
+
+            markerX = static_cast<int>(center.x);
+            markerY = static_cast<int>(center.y);
+
+            markerFound = true;
+
+            cv::circle(
+                frame,
+                 center,
+                10,
+                cv::Scalar(255, 0, 255),
+                3
+            );
         }
 
         GameState state = mapper.update(markerX, markerY);

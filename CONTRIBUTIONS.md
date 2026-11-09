@@ -5,3 +5,6 @@ Assignment 2: Updated the marker detection to also track position of the markers
 Santi: 
 Assignment 1:Created the CameraInput component, an object-oriented class that initializes the webcam, captures continuous frames, and validates them before passing them to the pipeline. It ensures the camera hardware is properly released upon closing.
 Assignment 2: Improved the MarkerDetection component by implementing a temporal tracking system with a frame-loss tolerance, preventing the marker from disappearing instantly during brief occlusions.
+
+Hammi:
+Assignment 1: Created marker detection class which handles the detection and conversion of the frame into greyscale, applying thresholding to seperate foreground objects from the background and contour detection, using polygon approximation function to identify convex quadrilaterals.

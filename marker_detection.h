@@ -1,5 +1,6 @@
 #pragma once
 
+#include "marker_recognizer.h"
 #include <opencv2/opencv.hpp>
 #include <vector>
 
@@ -9,7 +10,8 @@ public:
         cv::Mat& frame
     );
 
-const std::vector<cv::Mat>& getWarpedMarkers() const;
+    MarkerDetection(MarkerRecognizer& recognizer);
+    const std::vector<cv::Mat>& getWarpedMarkers() const;
 
 private:
     std::vector<cv::Point2f> orderCorners(
@@ -17,6 +19,7 @@ private:
     );
 
     std::vector<cv::Mat> warpedMarkers;
+    MarkerRecognizer& recognizer;
     //int frameCount = 0;
 };
 

@@ -1,14 +1,18 @@
+#include "marker_recognizer.h"
 #include "marker_detection.h"
 #include <cmath>
 #include <cfloat>
 
 
+MarkerDetection::MarkerDetection(MarkerRecognizer& recognizer)
+    : recognizer(recognizer)
+{}
 //outer vector list of candidates, inner the four corners of a marker
-std::vector<std::vector<cv::Point2f>>
 
-MarkerDetection::detect(cv::Mat& frame) //input frame refrence
+std::vector<std::vector<cv::Point2f>>MarkerDetection::detect(cv::Mat& frame) //input frame refrence
 {
     std::vector<std::vector<cv::Point2f>> markers;
+
 
     if (frame.empty())
         return markers;
@@ -96,6 +100,9 @@ MarkerDetection::detect(cv::Mat& frame) //input frame refrence
             cv::Size(200, 200)
         );
 
+        if (!recognizer.recognize(warped))
+        continue;
+
         warpedMarkers.push_back(warped);
            
         //calculate center
@@ -111,8 +118,8 @@ MarkerDetection::detect(cv::Mat& frame) //input frame refrence
         for (int i = 0; i < 4; ++i) {
             cv::line(
                 frame,
-                polygon[i],
-                polygon[(i + 1) % 4],
+                corners[i],
+                corners[(i + 1) % 4],
                 cv::Scalar(0, 255, 0),
                 2
             );
@@ -128,7 +135,9 @@ MarkerDetection::detect(cv::Mat& frame) //input frame refrence
     return markers;
 }
 
-std::vector<cv::Point2f> MarkerDetection::orderCorners(
+
+
+    std::vector<cv::Point2f> MarkerDetection::orderCorners(
     const std::vector<cv::Point2f>& corners)
 {
     std::vector<cv::Point2f> ordered(4);
