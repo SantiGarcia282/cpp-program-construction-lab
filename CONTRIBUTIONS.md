@@ -1,11 +1,12 @@
 Altun:
-Assignment 1: Created the first version of the interaction mapper, able to take an input of an X coardinate, nomralize it, check its position in relation to some simple ball logic and change a struct based on the info. V2 will include x and y coardinates as well as more sofisticated ball logic.
-Assignment 2: Updated the marker detection to also track position of the markers center and added a visual debugger to see where the center is on the marker.
+Assignment 1: Created the first version of the interaction mapper, able to take an input of an X coardinate, nomralize it, check its position in relation to some simple ball logic and change a struct based on the info. V2 will include x and y coardinates as well as more sofisticated ball logic. (InteractionMapping component)
+Assignment 2: Updated the marker detection to also track position of the markers center and added a visual debugger to see where the center is on the marker. (Markerdetection component)
 
-Santi: 
-Assignment 1:Created the CameraInput component, an object-oriented class that initializes the webcam, captures continuous frames, and validates them before passing them to the pipeline. It ensures the camera hardware is properly released upon closing.
-Assignment 2: Improved the MarkerDetection component by implementing a temporal tracking system with a frame-loss tolerance, preventing the marker from disappearing instantly during brief occlusions.
+Santi:
+Assignment 1:Created the CameraInput component, an object-oriented class that initializes the webcam, captures continuous frames, and validates them before passing them to the pipeline. It ensures the camera hardware is properly released upon closing. (CameraInput component)
+Assignment 2: Improved the MarkerDetection component by implementing a temporal tracking system with a frame-loss tolerance, preventing the marker from disappearing instantly during brief occlusions.(Markerdetection component)
 
 Hammi:
-Assignment 1: Created marker detection class which handles the detection and conversion of the frame into greyscale, applying thresholding to seperate foreground objects from the background and contour detection, using polygon approximation function to identify convex quadrilaterals.
-Assignment 2: Created a method for resetting the game score.
+Assignment 1: Created marker detection class which handles the detection and conversion of the frame into greyscale, applying thresholding to seperate foreground objects from the background and contour detection, using polygon approximation function to identify convex quadrilaterals. (Markerdetection component)
+Assignment 2: Created a method for resetting the game score. (InteractionMapping component)
+
