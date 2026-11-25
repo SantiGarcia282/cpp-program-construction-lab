@@ -7,6 +7,7 @@ public:
 
     GameState update(int markerX, int markerY);
     void spawnBall();
+    void resetScore();
 
     const GameState& getState() const { return state_; }
 

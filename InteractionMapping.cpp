@@ -42,6 +42,12 @@ bool InteractionMapper::checkSave() const {
     return overlapX && overlapY;
 }
 
+void InteractionMapper::resetScore() {
+    state_.score = 0;
+    state_.ballActive = false;
+    state_.saveMade = false;
+}
+
 void InteractionMapper::updateBall() {
     if (!state_.ballActive) return;
 

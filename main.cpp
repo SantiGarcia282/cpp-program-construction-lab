@@ -14,6 +14,8 @@ int main()
     MarkerRecognizer recognizer("aruco_id_25.png");
     MarkerDetection detection(recognizer);
 
+    int key;
+
     //grab frame
     if (!camera.getFrame(frame)) {
         std::cerr << "Failed to grab initial frame." << std::endl;
@@ -90,7 +92,14 @@ int main()
 
         cv::imshow("Integrated Game Test", frame);
 
-        if (cv::waitKey(20) == 27) {
+        key = cv::waitKey(1);
+
+        if(key == 'r' || key == 'R') //reset the score and balls
+        {
+            mapper.resetScore();
+        }
+        else if(key == 27)
+        {
             break;
         }
     }
