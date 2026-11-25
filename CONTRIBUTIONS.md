@@ -8,3 +8,4 @@ Assignment 2: Improved the MarkerDetection component by implementing a temporal 
 
 Hammi:
 Assignment 1: Created marker detection class which handles the detection and conversion of the frame into greyscale, applying thresholding to seperate foreground objects from the background and contour detection, using polygon approximation function to identify convex quadrilaterals.
+Assignment 2: Created a method for resetting the game score.
